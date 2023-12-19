@@ -31,10 +31,7 @@ const validateUserRegistration = [
     .isLength({ min: 5 })
     .withMessage("Address should be minmun 5 characters long."),
   body("image").optional().isString().withMessage("Image is optional!"),
-  body("phone")
-  .trim()
-  .notEmpty()
-  .withMessage("Phone is required!")
+  body("phone").trim().notEmpty().withMessage("Phone is required!"),
 ];
 
 // sign in validation
@@ -75,13 +72,27 @@ const validateUserPasswordUpdate = [
     .withMessage(
       "Password should contain at least one uppercase letter, one lowercase letter, one number, and one special character"
     ),
-    body("confirmPassword")
-    .custom((value,{req})=>{
-      if(value != req.body.newPassword){
-        throw new createHttpError('Password did not match!')
-      }
-      return true;
-    }),
+  body("confirmPassword").custom((value, { req }) => {
+    if (value != req.body.newPassword) {
+      throw new createHttpError("Password did not match!");
+    }
+    return true;
+  }),
 ];
 
-module.exports = { validateUserRegistration, validateUserLogin,validateUserPasswordUpdate };
+// forget user password
+const validateUserForgetPassword = [
+  body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required!")
+    .isEmail()
+    .withMessage("Email address is not valid!"),
+];
+
+module.exports = {
+  validateUserRegistration,
+  validateUserLogin,
+  validateUserPasswordUpdate,
+  validateUserForgetPassword,
+};

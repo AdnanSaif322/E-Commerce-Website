@@ -7,10 +7,11 @@ const {
   activateUserAccount,
   handleUpdateUserById,
   handleManageUserStatusById,
-  handleUpdateUserPassword
+  handleUpdateUserPassword,
+  handleForgetPassword
 } = require("../controllers/userController");
 const uploadUserImage = require("../middlewares/uploadFile");
-const { validateUserRegistration, validateUserPasswordUpdate } = require("../validators/auth");
+const { validateUserRegistration, validateUserPasswordUpdate,validateUserForgetPassword } = require("../validators/auth");
 const runValidation = require("../validators/index");
 const { isLoggedIn, isLoggedOut, isAdmin } = require("../middlewares/auth");
 
@@ -44,5 +45,11 @@ userRouter.put(
   isAdmin,
   handleManageUserStatusById
 ); //manage user status ban/unban
+
+userRouter.post(
+  "/forget-Password",
+  validateUserForgetPassword,
+  handleForgetPassword
+);
 
 module.exports = userRouter;

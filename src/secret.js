@@ -11,13 +11,13 @@ const jwtActivationKey = process.env.JWT_ACTIVATION_KEY || "asd0spoi2lklsd";
 
 const jwtAccessKey = process.env.JWT_ACCESS_KEY || "SADQWEADSAWQE";
 
+const jwtResetPasswordKey = process.env.JWT_RESET_PASSWORD_KEY || "RESETKEY";
+
 const smtpUsername = process.env.SMTP_USERNAME || "";
 
 const smtpPassword = process.env.SMTP_PASSWORD || "";
 
-const clientURL = process.env.CLIENT_URL || '';
-
-
+const clientURL = process.env.CLIENT_URL || "";
 
 module.exports = {
   serverPort,
@@ -27,6 +27,6 @@ module.exports = {
   smtpUsername,
   smtpPassword,
   clientURL,
-  jwtAccessKey
- 
+  jwtAccessKey,
+  jwtResetPasswordKey,
 };

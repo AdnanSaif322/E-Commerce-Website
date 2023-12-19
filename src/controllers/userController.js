@@ -6,7 +6,7 @@ const { findWithId } = require("../services/findItem");
 const bcrypt = require("bcryptjs");
 const deleteImage = require("../helper/deleteImageHelper");
 const { createJSONWebToken } = require("../helper/jsonwebtoken");
-const { jwtActivationKey, clientURL } = require("../secret");
+const { jwtActivationKey, clientURL, jwtResetPasswordKey } = require("../secret");
 const emailWithNodemailer = require("../helper/email");
 const {
   handleUserAction,
@@ -121,7 +121,7 @@ const processRegister = async (req, res, next) => {
 
     // send email with nodemailer
     try {
-      // await emailWithNodemailer(emailData);
+      await emailWithNodemailer(emailData);
     } catch (emailError) {
       next(createError(500, "Failed to send verification Email"));
       return;
@@ -217,16 +217,65 @@ const handleManageUserStatusById = async (req, res, next) => {
 // update user password
 const handleUpdateUserPassword = async (req, res, next) => {
   try {
-    const { email,oldPassword, newPassword,confirmPassword } = req.body;
+    const { email, oldPassword, newPassword, confirmPassword } = req.body;
     const userId = req.params.id;
- 
-    const updatedUser = await updateUserPasswordById(userId,email,oldPassword,newPassword,confirmPassword);
+
+    const updatedUser = await updateUserPasswordById(
+      userId,
+      email,
+      oldPassword,
+      newPassword,
+      confirmPassword
+    );
 
     // success message
     return successResponse(res, {
       statusCode: 200,
       message: "User password updated successfully!",
       payload: { updatedUser },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// forget user password controller
+const handleForgetPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const userData = await User.findOne({ email: email });
+    if (!userData) {
+      throw createError(404, "No user found with this email. Please register");
+    }
+    console.log(userData);
+
+    // create jwt
+    const token = createJSONWebToken({ email }, jwtResetPasswordKey, "15m");
+
+    // prepare emaill
+    const emailData = {
+      email,
+      subject: "Password Reset Email",
+      html: `
+        <h2> Greetings ${userData.name}!!</h2>
+        <p> Please click here to <a href="${clientURL}/api/users/reset-password/${token}"> reset your account password </a></p>
+      `,
+    };
+
+    // send email with nodemailer
+    try {
+      await emailWithNodemailer(emailData);
+    } catch (emailError) {
+      next(createError(500, "Failed to send reset password Email"));
+      return;
+    }
+
+    // success message
+    return successResponse(res, {
+      statusCode: 200,
+      message: `Please reset your password from your email.`,
+      payload: { token },
+      // imageBufferString
     });
   } catch (error) {
     next(error);
@@ -242,4 +291,5 @@ module.exports = {
   handleUpdateUserById,
   handleManageUserStatusById,
   handleUpdateUserPassword,
+  handleForgetPassword,
 };
