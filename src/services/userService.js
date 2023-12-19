@@ -1,6 +1,7 @@
 const createHttpError = require("http-errors");
 const User = require("../models/userModel");
 const deleteImage = require("../helper/deleteImageHelper");
+const bcrypt = require('bcryptjs');
 
 // find all user for admin Service
 const findUser = async (search, limit, page) => {
@@ -112,6 +113,43 @@ const updateUserById = async (userId,req) => {
   }
 };
 
+// 
+const updateUserPasswordById = async (userId,email,oldPassword,newPassword,confirmPassword) => {
+  try {
+    const user = await User.findOne({email:email});
+    if(!user){
+      throw createHttpError(404, 'User not found with this email.');
+    }
+
+    if(!newPassword === confirmPassword){
+      throw createHttpError(400, 'New password did not match with confirm password');
+    }
+    // compare password
+    const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
+    console.log("password match");
+
+    if (!isPasswordMatch) {
+      throw createError(401, "Old password did not match! Please try again");
+    }
+
+    const updates = { $set: { password: newPassword } };
+    const updateOptions = { new: true };
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      updates,
+      updateOptions
+    ).select("-password");
+
+    if (!updatedUser) {
+      throw createError(400, "Failed to update password");
+    }
+    return updatedUser;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // manage user status service
 const handleUserAction = async (userId, action) => {
   try {
@@ -147,5 +185,6 @@ module.exports = {
   findUserById,
   deleteUserById,
   updateUserById,
+  updateUserPasswordById,
   handleUserAction,
 };

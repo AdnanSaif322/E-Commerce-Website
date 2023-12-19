@@ -14,6 +14,7 @@ const {
   findUserById,
   deleteUserById,
   updateUserById,
+  updateUserPasswordById,
 } = require("../services/userService");
 const fs = require("fs").promises;
 
@@ -216,30 +217,10 @@ const handleManageUserStatusById = async (req, res, next) => {
 // update user password
 const handleUpdateUserPassword = async (req, res, next) => {
   try {
-    const { oldPassword, newPassword } = req.body;
+    const { email,oldPassword, newPassword,confirmPassword } = req.body;
     const userId = req.params.id;
-    const user = await findWithId(User, userId);
-
-    // compare password
-    const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
-    console.log("password match");
-
-    if (!isPasswordMatch) {
-      throw createError(401, "Old password did not match! Please try again");
-    }
-
-    const updates = { $set: { password: newPassword } };
-    const updateOptions = { new: true };
-
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      updates,
-      updateOptions
-    ).select("-password");
-
-    if (!updatedUser) {
-      throw createError(400, "Failed to update password");
-    }
+ 
+    const updatedUser = await updateUserPasswordById(userId,email,oldPassword,newPassword,confirmPassword);
 
     // success message
     return successResponse(res, {
