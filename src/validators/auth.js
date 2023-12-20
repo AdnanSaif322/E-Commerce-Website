@@ -90,9 +90,29 @@ const validateUserForgetPassword = [
     .withMessage("Email address is not valid!"),
 ];
 
+// reset user password
+const validateUserResetPassword = [
+  body("token")
+    .trim()
+    .notEmpty()
+    .withMessage("Token is required!"),
+    body("newPassword")
+    .trim()
+    .notEmpty()
+    .withMessage("New Password is required!")
+    .isLength({ min: 5 })
+    .withMessage("Password should be minmun 5 characters long.")
+    .matches(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/)
+    .withMessage(
+      "Password should contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+    ),
+
+];
+
 module.exports = {
   validateUserRegistration,
   validateUserLogin,
   validateUserPasswordUpdate,
   validateUserForgetPassword,
+  validateUserResetPassword
 };

@@ -6,7 +6,11 @@ const { findWithId } = require("../services/findItem");
 const bcrypt = require("bcryptjs");
 const deleteImage = require("../helper/deleteImageHelper");
 const { createJSONWebToken } = require("../helper/jsonwebtoken");
-const { jwtActivationKey, clientURL, jwtResetPasswordKey } = require("../secret");
+const {
+  jwtActivationKey,
+  clientURL,
+  jwtResetPasswordKey,
+} = require("../secret");
 const emailWithNodemailer = require("../helper/email");
 const {
   handleUserAction,
@@ -229,6 +233,10 @@ const handleUpdateUserPassword = async (req, res, next) => {
       confirmPassword
     );
 
+    if (!updateUserById) {
+      throw createError(400, "User was not updated successfully!");
+    }
+
     // success message
     return successResponse(res, {
       statusCode: 200,
@@ -250,7 +258,42 @@ const handleForgetPassword = async (req, res, next) => {
     return successResponse(res, {
       statusCode: 200,
       message: `Please reset your password from your email.`,
-      payload: token ,
+      payload: token,
+      // imageBufferString
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// reset user password
+const handleResetPassword = async (req, res, next) => {
+  try {
+    const { token, newPassword } = req.body;
+    const decoded = jwt.verify(token, jwtResetPasswordKey);
+
+    if (!decoded) {
+      throw createError(400, "Invalid or expired token!");
+    }
+
+    const filter = { email: decoded.email };
+    const updates = { password: newPassword };
+    const options = { new: true };
+    const updatedUser = await User.findOneAndUpdate(
+      filter,
+      updates,
+      options
+    ).select('-password');
+
+    if (!updateUserById) {
+      throw createError(400, "Password reset failed!");
+    }
+
+    // success message
+    return successResponse(res, {
+      statusCode: 200,
+      message: `Password was reset successfully.`,
+      payload: updatedUser,
       // imageBufferString
     });
   } catch (error) {
@@ -268,4 +311,5 @@ module.exports = {
   handleManageUserStatusById,
   handleUpdateUserPassword,
   handleForgetPassword,
+  handleResetPassword,
 };

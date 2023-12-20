@@ -8,10 +8,16 @@ const {
   handleUpdateUserById,
   handleManageUserStatusById,
   handleUpdateUserPassword,
-  handleForgetPassword
+  handleForgetPassword,
+  handleResetPassword,
 } = require("../controllers/userController");
 const uploadUserImage = require("../middlewares/uploadFile");
-const { validateUserRegistration, validateUserPasswordUpdate,validateUserForgetPassword } = require("../validators/auth");
+const {
+  validateUserRegistration,
+  validateUserPasswordUpdate,
+  validateUserForgetPassword,
+  validateUserResetPassword,
+} = require("../validators/auth");
 const runValidation = require("../validators/index");
 const { isLoggedIn, isLoggedOut, isAdmin } = require("../middlewares/auth");
 
@@ -26,18 +32,30 @@ userRouter.post(
   runValidation,
   processRegister
 ); //register user
-userRouter.post("/acitave", isLoggedOut, activateUserAccount);  //verify new account
-userRouter.get("/", isLoggedIn, isAdmin, getUsers);  //get all users
-userRouter.get("/:id", isLoggedIn, isAdmin, getUserById);  //get single user
+userRouter.post("/acitave", isLoggedOut, activateUserAccount); //verify new account
+userRouter.get("/", isLoggedIn, isAdmin, getUsers); //get all users
+userRouter.get("/:id", isLoggedIn, isAdmin, getUserById); //get single user
 userRouter.delete("/:id", isLoggedIn, isAdmin, handleDeleteUserById); //delete single user
-userRouter.put("/update-password/:id", isLoggedIn,validateUserPasswordUpdate,runValidation, handleUpdateUserPassword); //update user password
+userRouter.put(
+  "/reset-Password",
+  validateUserResetPassword,
+  runValidation,
+  handleResetPassword
+); //reset user password
+userRouter.put(
+  "/update-password/:id",
+  isLoggedIn,
+  validateUserPasswordUpdate,
+  runValidation,
+  handleUpdateUserPassword
+); //update user password
 
 userRouter.put(
   "/:id",
   isLoggedIn,
   uploadUserImage.single("image"),
   handleUpdateUserById
-);  //update user information
+); //update user information
 
 userRouter.put(
   "/manage-user/:id",
@@ -49,7 +67,8 @@ userRouter.put(
 userRouter.post(
   "/forget-Password",
   validateUserForgetPassword,
+  runValidation,
   handleForgetPassword
-);
+); //forget user password
 
 module.exports = userRouter;
