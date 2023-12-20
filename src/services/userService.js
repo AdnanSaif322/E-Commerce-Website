@@ -1,7 +1,10 @@
 const createHttpError = require("http-errors");
 const User = require("../models/userModel");
 const deleteImage = require("../helper/deleteImageHelper");
-const bcrypt = require('bcryptjs');
+const bcrypt = require("bcryptjs");
+const { jwtResetPasswordKey, clientURL } = require("../secret");
+const { createJSONWebToken } = require("../helper/jsonwebtoken");
+const emailWithNodemailer = require("../helper/email");
 
 // find all user for admin Service
 const findUser = async (search, limit, page) => {
@@ -68,13 +71,12 @@ const deleteUserById = async (id, options = {}) => {
 };
 
 // update user information
-const updateUserById = async (userId,req) => {
+const updateUserById = async (userId, req) => {
   try {
-    const options = { password: 0 };    
-    const user = await findUserById( userId, options);
+    const options = { password: 0 };
+    const user = await findUserById(userId, options);
     const updateOptions = { new: true, runValidators: true, context: "query" };
     let updates = {};
-
 
     for (let key in req.body) {
       if (["name", "password", "phone", "address"].includes(key)) {
@@ -103,7 +105,7 @@ const updateUserById = async (userId,req) => {
       updates,
       updateOptions
     ).select("-password");
-      
+
     if (!updatedUser) {
       throw createError(404, "User with this ID does not exist!");
     }
@@ -113,16 +115,25 @@ const updateUserById = async (userId,req) => {
   }
 };
 
-// 
-const updateUserPasswordById = async (userId,email,oldPassword,newPassword,confirmPassword) => {
+//
+const updateUserPasswordById = async (
+  userId,
+  email,
+  oldPassword,
+  newPassword,
+  confirmPassword
+) => {
   try {
-    const user = await User.findOne({email:email});
-    if(!user){
-      throw createHttpError(404, 'User not found with this email.');
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      throw createHttpError(404, "User not found with this email.");
     }
 
-    if(!newPassword === confirmPassword){
-      throw createHttpError(400, 'New password did not match with confirm password');
+    if (!newPassword === confirmPassword) {
+      throw createHttpError(
+        400,
+        "New password did not match with confirm password"
+      );
     }
     // compare password
     const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
@@ -180,6 +191,43 @@ const handleUserAction = async (userId, action) => {
   }
 };
 
+// manage user status service
+const forgetPassword = async (email) => {
+  try {
+    const userData = await User.findOne({ email: email });
+    if (!userData) {
+      throw createError(404, "No user found with this email. Please register");
+    }
+    console.log(userData);
+
+    // create jwt
+    const token = createJSONWebToken({ email }, jwtResetPasswordKey, "15m");
+
+    // prepare emaill
+    const emailData = {
+      email,
+      subject: "Password Reset Email",
+      html: `
+        <h2> Greetings ${userData.name}!!</h2>
+        <p> Please click here to <a href="${clientURL}/api/users/reset-password/${token}"> reset your account password </a></p>
+      `,
+    };
+
+    // send email with nodemailer
+    try {
+      await emailWithNodemailer(emailData);
+    } catch (emailError) {
+      throw createHttpError(400, "failed to send reset password email");
+      // next(createHttpError(500, "Failed to send reset password Email"));
+      return;
+    }
+
+    return token;
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   findUser,
   findUserById,
@@ -187,4 +235,5 @@ module.exports = {
   updateUserById,
   updateUserPasswordById,
   handleUserAction,
+  forgetPassword,
 };

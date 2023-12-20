@@ -15,6 +15,7 @@ const {
   deleteUserById,
   updateUserById,
   updateUserPasswordById,
+  forgetPassword,
 } = require("../services/userService");
 const fs = require("fs").promises;
 
@@ -243,38 +244,13 @@ const handleUpdateUserPassword = async (req, res, next) => {
 const handleForgetPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
-    const userData = await User.findOne({ email: email });
-    if (!userData) {
-      throw createError(404, "No user found with this email. Please register");
-    }
-    console.log(userData);
-
-    // create jwt
-    const token = createJSONWebToken({ email }, jwtResetPasswordKey, "15m");
-
-    // prepare emaill
-    const emailData = {
-      email,
-      subject: "Password Reset Email",
-      html: `
-        <h2> Greetings ${userData.name}!!</h2>
-        <p> Please click here to <a href="${clientURL}/api/users/reset-password/${token}"> reset your account password </a></p>
-      `,
-    };
-
-    // send email with nodemailer
-    try {
-      await emailWithNodemailer(emailData);
-    } catch (emailError) {
-      next(createError(500, "Failed to send reset password Email"));
-      return;
-    }
+    const token = await forgetPassword(email);
 
     // success message
     return successResponse(res, {
       statusCode: 200,
       message: `Please reset your password from your email.`,
-      payload: { token },
+      payload: token ,
       // imageBufferString
     });
   } catch (error) {
