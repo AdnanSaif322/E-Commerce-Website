@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 const { jwtResetPasswordKey, clientURL } = require("../secret");
 const { createJSONWebToken } = require("../helper/jsonwebtoken");
 const emailWithNodemailer = require("../helper/email");
+const jwt = require('jsonwebtoken');
 
 // find all user for admin Service
 const findUser = async (search, limit, page) => {
@@ -228,6 +229,34 @@ const forgetPassword = async (email) => {
   }
 };
 
+// reset password service
+const resetPassword = async (token,newPassword) => {
+  try {
+    const decoded = jwt.verify(token, jwtResetPasswordKey);
+
+    if (!decoded) {
+      throw createError(400, "Invalid or expired token!");
+    }
+
+    const filter = { email: decoded.email };
+    const updates = { password: newPassword };
+    const options = { new: true };
+    const updatedUser = await User.findOneAndUpdate(
+      filter,
+      updates,
+      options
+    ).select('-password');
+
+    if (!updateUserById) {
+      throw createError(400, "Password reset failed!");
+    }
+    return updatedUser;
+
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   findUser,
   findUserById,
@@ -236,4 +265,5 @@ module.exports = {
   updateUserPasswordById,
   handleUserAction,
   forgetPassword,
+  resetPassword
 };
