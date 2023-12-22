@@ -6,7 +6,7 @@ const { jwtAccessKey } = require("../secret");
 // is logged in middleware
 const isLoggedIn = async (req, res, next) => {
   try {
-    const token = req.cookies.access_token;
+    const token = req.cookies.accessToken;
     if (!token) {
       throw createError(401, "access token not found!Please log in");
     }

@@ -29,15 +29,15 @@ const handleLogin = async (req, res, next) => {
     // token, cookie
 
     // create jwt
-    const accessToken = createJSONWebToken({ user }, jwtAccessKey, "1m");
+    const accessToken = createJSONWebToken({ user }, jwtAccessKey, "5m");
     res.cookie("accessToken", accessToken, {
-      maxAge: 1 * 60 * 1000, //15 minutes
+      maxAge: 5 * 60 * 1000, //15 minutes
       httpOnly: true,
       sameSite: "none",
     });
 
     // create refresh token
-    const refreshToken = createJSONWebToken({ user }, jwtRefreshKey, "15m");
+    const refreshToken = createJSONWebToken({ user }, jwtRefreshKey, "7d");
     res.cookie("refreshToken", refreshToken, {
       maxAge: 7 * 24 * 60 * 60 * 1000, //7 day
       httpOnly: true,
@@ -61,7 +61,8 @@ const handleLogin = async (req, res, next) => {
 
 const handleLogout = async (req, res, next) => {
   try {
-    res.clearCookie("access_token");
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
     // success response
     return successResponse(res, {
       statusCode: 200,
@@ -89,10 +90,10 @@ const handleRefreshToken = async (req, res, next) => {
     const accessToken = createJSONWebToken(
       decodedToken.user,
       jwtAccessKey,
-      "1m"
+      "5m"
     );
     res.cookie("accessToken", accessToken, {
-      maxAge: 1 * 60 * 1000, //15 minutes
+      maxAge: 5 * 60 * 1000, //15 minutes
       httpOnly: true,
       sameSite: "none",
     });

@@ -1,10 +1,10 @@
 const express = require("express");
 const {
-  getUsers,
-  getUserById,
+  handleGetUsers,
+  handleGetUserById,
   handleDeleteUserById,
-  processRegister,
-  activateUserAccount,
+  handleProcessRegister,
+  handleActivateUserAccount,
   handleUpdateUserById,
   handleManageUserStatusById,
   handleUpdateUserPassword,
@@ -30,12 +30,12 @@ userRouter.post(
   uploadUserImage.single("image"),
   validateUserRegistration,
   runValidation,
-  processRegister
+  handleProcessRegister
 ); //register user
-userRouter.post("/acitave", isLoggedOut, activateUserAccount); //verify new account
-userRouter.get("/", isLoggedIn, isAdmin, getUsers); //get all users
-userRouter.get("/:id", isLoggedIn, isAdmin, getUserById); //get single user
-userRouter.delete("/:id", isLoggedIn, isAdmin, handleDeleteUserById); //delete single user
+userRouter.post("/acitave", isLoggedOut, handleActivateUserAccount); //verify new account
+userRouter.get("/", isLoggedIn, isAdmin, handleGetUsers); //get all users
+userRouter.get("/:id([0-9a-fA-F]{24})", isLoggedIn, isAdmin, handleGetUserById); //get single user
+userRouter.delete("/:id([0-9a-fA-F]{24})", isLoggedIn, isAdmin, handleDeleteUserById); //delete single user
 userRouter.put(
   "/reset-Password",
   validateUserResetPassword,
@@ -43,7 +43,7 @@ userRouter.put(
   handleResetPassword
 ); //reset user password
 userRouter.put(
-  "/update-password/:id",
+  "/update-password/:id([0-9a-fA-F]{24})",
   isLoggedIn,
   validateUserPasswordUpdate,
   runValidation,
@@ -51,14 +51,14 @@ userRouter.put(
 ); //update user password
 
 userRouter.put(
-  "/:id",
+  "/:id([0-9a-fA-F]{24})",
   isLoggedIn,
   uploadUserImage.single("image"),
   handleUpdateUserById
 ); //update user information
 
 userRouter.put(
-  "/manage-user/:id",
+  "/manage-user/:id([0-9a-fA-F]{24})",
   isLoggedIn,
   isAdmin,
   handleManageUserStatusById

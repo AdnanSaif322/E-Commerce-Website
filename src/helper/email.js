@@ -11,10 +11,6 @@ const transporter = nodemailer.createTransport({
     pass: smtpPassword,
   },
 });
-console.log(smtpUsername);
-
-console.log(smtpPassword);
-
 
 const emailWithNodemailer = async (emailData) => {
   try {

@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs");
 const { jwtResetPasswordKey, clientURL } = require("../secret");
 const { createJSONWebToken } = require("../helper/jsonwebtoken");
 const emailWithNodemailer = require("../helper/email");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 // find all user for admin Service
 const findUser = async (search, limit, page) => {
@@ -79,11 +79,12 @@ const updateUserById = async (userId, req) => {
     const updateOptions = { new: true, runValidators: true, context: "query" };
     let updates = {};
 
-    for (let key in req.body) {
-      if (["name", "password", "phone", "address"].includes(key)) {
+    const allowedFields = ["name", "password", "phone", "address"];
+    for (const key in req.body) {
+      if (allowedFields.includes(key)) {
         updates[key] = req.body[key];
-      } else if (["email"].includes(key)) {
-        throw createError("Email can not be updated!");
+      } else if (key == 'email') {
+        throw createError(400,"Email can not be updated!");
       }
     }
 
@@ -230,7 +231,7 @@ const forgetPassword = async (email) => {
 };
 
 // reset password service
-const resetPassword = async (token,newPassword) => {
+const resetPassword = async (token, newPassword) => {
   try {
     const decoded = jwt.verify(token, jwtResetPasswordKey);
 
@@ -245,13 +246,12 @@ const resetPassword = async (token,newPassword) => {
       filter,
       updates,
       options
-    ).select('-password');
+    ).select("-password");
 
     if (!updateUserById) {
       throw createError(400, "Password reset failed!");
     }
     return updatedUser;
-
   } catch (error) {
     throw error;
   }
@@ -265,5 +265,5 @@ module.exports = {
   updateUserPasswordById,
   handleUserAction,
   forgetPassword,
-  resetPassword
+  resetPassword,
 };

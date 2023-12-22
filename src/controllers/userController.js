@@ -25,7 +25,7 @@ const {
 const fs = require("fs").promises;
 
 // search users for Admin
-const getUsers = async (req, res, next) => {
+const handleGetUsers = async (req, res, next) => {
   try {
     const search = req.query.search || "";
     const page = Number(req.query.page) || 1;
@@ -51,7 +51,7 @@ const getUsers = async (req, res, next) => {
 };
 
 // Search single user for Admin
-const getUserById = async (req, res, next) => {
+const handleGetUserById = async (req, res, next) => {
   try {
     const id = req.params.id;
     const options = { password: 0 };
@@ -84,7 +84,7 @@ const handleDeleteUserById = async (req, res, next) => {
 };
 
 // ProcessRegistger
-const processRegister = async (req, res, next) => {
+const handleProcessRegister = async (req, res, next) => {
   try {
     const { name, email, password, phone, address } = req.body;
 
@@ -146,7 +146,7 @@ const processRegister = async (req, res, next) => {
 };
 
 // Activate user Account
-const activateUserAccount = async (req, res, next) => {
+const handleActivateUserAccount = async (req, res, next) => {
   try {
     const token = req.body.token;
     if (!token) throw createError(404, "token not found");
@@ -285,11 +285,11 @@ const handleResetPassword = async (req, res, next) => {
 };
 
 module.exports = {
-  getUsers,
-  getUserById,
+  handleGetUsers,
+  handleGetUserById,
   handleDeleteUserById,
-  processRegister,
-  activateUserAccount,
+  handleProcessRegister,
+  handleActivateUserAccount,
   handleUpdateUserById,
   handleManageUserStatusById,
   handleUpdateUserPassword,
