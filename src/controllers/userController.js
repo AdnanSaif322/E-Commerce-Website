@@ -22,6 +22,7 @@ const {
   forgetPassword,
   resetPassword,
 } = require("../services/userService");
+const sendEmail = require("../helper/sendEmail");
 const fs = require("fs").promises;
 
 // search users for Admin
@@ -126,12 +127,7 @@ const handleProcessRegister = async (req, res, next) => {
     };
 
     // send email with nodemailer
-    try {
-      await emailWithNodemailer(emailData);
-    } catch (emailError) {
-      next(createError(500, "Failed to send verification Email"));
-      return;
-    }
+    sendEmail(emailData);
 
     // success message
     return successResponse(res, {
