@@ -1,9 +1,10 @@
 const app = require('./app');
 const connectDB = require('./config/db');
+const logger = require('./controllers/loggerController');
 const { serverPort } = require('./secret');
 
 
 app.listen(serverPort, async()=>{
-    console.log(`Server running at port ${serverPort}`);
+    logger.log('info',`Server running at port ${serverPort}`);
     await connectDB();
 });

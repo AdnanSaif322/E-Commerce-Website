@@ -1,3 +1,5 @@
+
+
 const setAccessTokenCookie = (res,accessToken) => {
     
     res.cookie("accessToken", accessToken, {
@@ -15,6 +17,7 @@ const setRfreshTokenCookie = (res, refreshToken) => {
       sameSite: "none",
     });
 };
+
 
 
 module.exports = {setAccessTokenCookie, setRfreshTokenCookie};
