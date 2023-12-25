@@ -9,4 +9,11 @@ const createCategoryService = async (name) => {
   return newCategory;
 };
 
-module.exports = { createCategoryService };
+const getCategories = async () => {
+  return await Category.find({}).select("name slug").lean();
+};
+const getCategory = async (slug) => {
+  return await Category.find({ slug }).select("name slug").lean();
+};
+
+module.exports = { createCategoryService, getCategories, getCategory };

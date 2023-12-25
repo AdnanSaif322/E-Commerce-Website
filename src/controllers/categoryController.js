@@ -2,7 +2,11 @@ const createError = require("http-errors");
 const { successResponse } = require("./responseController");
 const slugify = require("slugify");
 const Category = require("../models/categoryModel");
-const { createCategoryService } = require("../services/categoryService");
+const {
+  createCategoryService,
+  getCategories,
+  getCategory,
+} = require("../services/categoryService");
 
 // search users for Admin
 const handleCreategory = async (req, res, next) => {
@@ -21,6 +25,38 @@ const handleCreategory = async (req, res, next) => {
   }
 };
 
+// get all categories
+const handleGetCategories = async (req, res, next) => {
+  try {
+    const categories = await getCategories();
+    return successResponse(res, {
+      statusCode: 200,
+      message: "/categories",
+      payload: categories,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// single category
+const handleGetCategory = async (req, res, next) => {
+  try {
+    const { slug } = req.params;
+    // const slug = slugify(name);
+    const categories = await getCategory(slug);
+    return successResponse(res, {
+      statusCode: 200,
+      message: "/category",
+      payload: categories,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   handleCreategory,
+  handleGetCategories,
+  handleGetCategory,
 };
