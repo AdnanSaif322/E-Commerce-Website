@@ -8,6 +8,7 @@ const userRouter = require("./routers/userRouter");
 const seedRouter = require("./routers/seedRouter");
 const authRouter = require("./routers/authRouter");
 const { errorResponse } = require("./controllers/responseController");
+const categoryRouter = require("./routers/categoryRouter");
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use(morgan("dev"));
 app.use("/users", userRouter);
 app.use("/seed", seedRouter);
 app.use("/auth", authRouter);
+app.use("/categories", categoryRouter);
 
 
 // get requests
