@@ -7,6 +7,7 @@ const {
   getCategories,
   getCategory,
   updateCategory,
+  deletecategory,
 } = require("../services/categoryService");
 
 // create category for Admin
@@ -79,9 +80,29 @@ const handleUpdateCategory = async (req, res, next) => {
   }
 };
 
+// delete category
+const handleDeleteCategory = async (req, res, next) => {
+  try {
+    const { slug } = req.params;
+    const deleteCategory = await deletecategory(slug);
+
+    if (!deleteCategory) {
+      throw createError(404, "Category not found with this slug!");
+    }
+    return successResponse(res, {
+      statusCode: 200,
+      message: "/category deleted",
+      payload: deleteCategory,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   handleCreategory,
   handleGetCategories,
   handleGetCategory,
   handleUpdateCategory,
+  handleDeleteCategory,
 };

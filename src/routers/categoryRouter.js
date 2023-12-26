@@ -6,6 +6,7 @@ const {
   handleGetCategories,
   handleGetCategory,
   handleUpdateCategory,
+  handleDeleteCategory,
 } = require("../controllers/categoryController");
 const { validateCategory } = require("../validators/category");
 
@@ -22,7 +23,7 @@ categoryRouter.post(
 
 categoryRouter.get("/", handleGetCategories); //get all categories
 
-categoryRouter.get(
+categoryRouter.put(
   "/:slug",
   isLoggedIn,
   isAdmin,
@@ -37,5 +38,7 @@ categoryRouter.get(
   runValidation,
   handleGetCategory
 ); //get category
+
+categoryRouter.delete("/:slug", isLoggedIn, isAdmin, handleDeleteCategory); //delete category
 
 module.exports = categoryRouter;
