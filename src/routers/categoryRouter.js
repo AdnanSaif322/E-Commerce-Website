@@ -5,6 +5,7 @@ const {
   handleCreategory,
   handleGetCategories,
   handleGetCategory,
+  handleUpdateCategory,
 } = require("../controllers/categoryController");
 const { validateCategory } = require("../validators/category");
 
@@ -20,6 +21,16 @@ categoryRouter.post(
 ); //create categories
 
 categoryRouter.get("/", handleGetCategories); //get all categories
+
+categoryRouter.get(
+  "/:slug",
+  isLoggedIn,
+  isAdmin,
+  validateCategory,
+  runValidation,
+  handleUpdateCategory
+); //update category
+
 categoryRouter.get(
   "/:slug",
   validateCategory,

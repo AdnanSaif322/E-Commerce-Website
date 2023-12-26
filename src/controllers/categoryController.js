@@ -6,9 +6,10 @@ const {
   createCategoryService,
   getCategories,
   getCategory,
+  updateCategory,
 } = require("../services/categoryService");
 
-// search users for Admin
+// create category for Admin
 const handleCreategory = async (req, res, next) => {
   try {
     const { name } = req.body;
@@ -44,11 +45,34 @@ const handleGetCategory = async (req, res, next) => {
   try {
     const { slug } = req.params;
     // const slug = slugify(name);
-    const categories = await getCategory(slug);
+    const category = await getCategory(slug);
+    if (!category) {
+      throw createError(404, "Category not found!");
+    }
     return successResponse(res, {
       statusCode: 200,
       message: "/category",
-      payload: categories,
+      payload: category,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// update category
+const handleUpdateCategory = async (req, res, next) => {
+  try {
+    const { name } = req.body;
+    const { slug } = req.params;
+    const updatedCategory = await updateCategory(name, slug);
+
+    if (!updatedCategory) {
+      throw createError(404, "Category not found with this slug!");
+    }
+    return successResponse(res, {
+      statusCode: 200,
+      message: "/category updated",
+      payload: updatedCategory,
     });
   } catch (error) {
     next(error);
@@ -59,4 +83,5 @@ module.exports = {
   handleCreategory,
   handleGetCategories,
   handleGetCategory,
+  handleUpdateCategory,
 };

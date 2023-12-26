@@ -16,4 +16,18 @@ const getCategory = async (slug) => {
   return await Category.find({ slug }).select("name slug").lean();
 };
 
-module.exports = { createCategoryService, getCategories, getCategory };
+const updateCategory = async (name, slug) => {
+  const updateCategory = await Category.findOneAndUpdate(
+    { slug },
+    { $set: { name: name, slug: slugify(name) } },
+    { new: true }
+  );
+  return updateCategory;
+};
+
+module.exports = {
+  createCategoryService,
+  getCategories,
+  getCategory,
+  updateCategory,
+};
