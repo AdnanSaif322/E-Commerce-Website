@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const { defaultImagePath } = require("../secret");
 
 //name, slug, description, price, quantity, sold, shipping, image
 const productSchema = new Schema(
@@ -22,7 +23,7 @@ const productSchema = new Schema(
       minlegth: [3, "Minimum product description length can be 3"],
     },
     price: {
-      type: number,
+      type: Number,
       required: [true, "Product price required"],
       trim: true,
       validate: {
@@ -33,7 +34,7 @@ const productSchema = new Schema(
       },
     },
     quantity: {
-      type: number,
+      type: Number,
       required: [true, "Product quantity required"],
       trim: true,
       validate: {
@@ -44,7 +45,7 @@ const productSchema = new Schema(
       },
     },
     sold: {
-      type: number,
+      type: Number,
       required: [true, "Product sold required"],
       trim: true,
       default: 0,
@@ -56,7 +57,7 @@ const productSchema = new Schema(
       },
     },
     shipping: {
-      type: number,
+      type: Number,
       default: 0, //shipping free then 0
     },
     image: {
