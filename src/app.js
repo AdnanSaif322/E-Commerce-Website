@@ -9,6 +9,7 @@ const seedRouter = require("./routers/seedRouter");
 const authRouter = require("./routers/authRouter");
 const { errorResponse } = require("./controllers/responseController");
 const categoryRouter = require("./routers/categoryRouter");
+const productRouter = require("./routers/productRouter");
 
 const app = express();
 
@@ -31,7 +32,7 @@ app.use("/users", userRouter);
 app.use("/seed", seedRouter);
 app.use("/auth", authRouter);
 app.use("/categories", categoryRouter);
-
+app.use("/products", productRouter);
 
 // get requests
 app.get("/test", (req, res) => {
@@ -45,9 +46,9 @@ app.use((req, res, next) => {
 
 // server error handling
 app.use((err, req, res, next) => {
-  return errorResponse(res,{
-    statusCode:err.status,
-    message: err.message
+  return errorResponse(res, {
+    statusCode: err.status,
+    message: err.message,
   });
   next();
 });
