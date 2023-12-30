@@ -24,6 +24,7 @@ const validateProduct = [
     .withMessage("Product quantity is required!")
     .isNumeric()
     .withMessage("Product quantity should be numeric."),
+  body("image").optional().isString().withMessage("Image is optional!"),
   body("category").notEmpty().withMessage("Product category is required!"),
 ];
 

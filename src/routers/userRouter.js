@@ -11,7 +11,7 @@ const {
   handleForgetPassword,
   handleResetPassword,
 } = require("../controllers/userController");
-const uploadUserImage = require("../middlewares/uploadFile");
+const { uploadUserImage } = require("../middlewares/uploadFile");
 const {
   validateUserRegistration,
   validateUserPasswordUpdate,
@@ -35,7 +35,12 @@ userRouter.post(
 userRouter.post("/acitave", isLoggedOut, handleActivateUserAccount); //verify new account
 userRouter.get("/", isLoggedIn, isAdmin, handleGetUsers); //get all users
 userRouter.get("/:id([0-9a-fA-F]{24})", isLoggedIn, isAdmin, handleGetUserById); //get single user
-userRouter.delete("/:id([0-9a-fA-F]{24})", isLoggedIn, isAdmin, handleDeleteUserById); //delete single user
+userRouter.delete(
+  "/:id([0-9a-fA-F]{24})",
+  isLoggedIn,
+  isAdmin,
+  handleDeleteUserById
+); //delete single user
 userRouter.put(
   "/reset-Password",
   validateUserResetPassword,

@@ -5,22 +5,18 @@ const { createProductService } = require("../services/productService");
 // create category for Admin
 const handleProduct = async (req, res, next) => {
   try {
-    const {
-      name,
-      description,
-      price,
-      quantity,
-      sold,
-      shipping,
-      image,
-      category,
-    } = req.body;
+    const { name, description, price, quantity, shipping, category } = req.body;
+
+    const image = req.file?.path;
+
+    if (image && image.size > 1024 * 1024 * 2) {
+      throw createError(400, "File is too large! It must be less than 2 mb");
+    }
     const newProduct = await createProductService(
       name,
       description,
       price,
       quantity,
-      sold,
       shipping,
       image,
       category

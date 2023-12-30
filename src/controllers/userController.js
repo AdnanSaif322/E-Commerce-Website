@@ -92,21 +92,17 @@ const handleProcessRegister = async (req, res, next) => {
     // check if user already exist in DB
     const userExist = await User.exists({ email: email });
 
+    const image = req.file?.path;
+
+    if (image && image.size > 1024 * 1024 * 2) {
+      throw createError(400, "File is too large! It must be less than 2 mb");
+    }
+
     if (userExist) {
       throw createError(
         409,
         "User already exist with this email. Please log in!"
       );
-    }
-
-    const image = req.file.path;
-
-    if (!image) {
-      throw createError(400, "Image file is required");
-    }
-
-    if (image.size > 1024 * 1024 * 2) {
-      throw createError(400, "File is too large! It must be less than 2 mb");
     }
 
     // create jwt
@@ -267,7 +263,7 @@ const handleForgetPassword = async (req, res, next) => {
 const handleResetPassword = async (req, res, next) => {
   try {
     const { token, newPassword } = req.body;
-    const updatedUser = await resetPassword(token,newPassword);
+    const updatedUser = await resetPassword(token, newPassword);
     // success message
     return successResponse(res, {
       statusCode: 200,

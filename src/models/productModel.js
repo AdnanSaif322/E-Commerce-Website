@@ -50,7 +50,7 @@ const productSchema = new Schema(
       trim: true,
       default: 0,
       validate: {
-        validator: (v) => v > 0,
+        validator: (v) => v >= 0,
         message: (props) => {
           `${props.value} is not a valid sold quantity! sold quantity must be greater than 0`;
         },

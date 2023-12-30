@@ -1,23 +1,31 @@
 const slugify = require("slugify");
 const Product = require("../models/productModel");
+const createError = require("http-errors");
 
 const createProductService = async (
   name,
   description,
   price,
   quantity,
-  sold,
   shipping,
   image,
   category
 ) => {
+  const productExists = await Product.exists({ name: name });
+  if (productExists) {
+    throw createError(404, "Product already exist!");
+  }
+
+  if (image && image.size > 1024 * 1024 * 2) {
+    throw createError(400, "File is too large! It must be less than 2 mb");
+  }
+
   const newProduct = await Product.create({
     name: name,
     slug: slugify(name),
     description: description,
     price: price,
     quantity: quantity,
-    sold: sold,
     shipping: shipping,
     image: image,
     category: category,
@@ -25,26 +33,26 @@ const createProductService = async (
   return newProduct;
 };
 
-const getCategories = async () => {
-  return await Category.find({}).select("name slug").lean();
-};
-const getCategory = async (slug) => {
-  return await Category.find({ slug }).select("name slug").lean();
-};
+// const getCategories = async () => {
+//   return await Category.find({}).select("name slug").lean();
+// };
+// const getCategory = async (slug) => {
+//   return await Category.find({ slug }).select("name slug").lean();
+// };
 
-const updateCategory = async (name, slug) => {
-  const updateCategory = await Category.findOneAndUpdate(
-    { slug },
-    { $set: { name: name, slug: slugify(name) } },
-    { new: true }
-  );
-  return updateCategory;
-};
+// const updateCategory = async (name, slug) => {
+//   const updateCategory = await Category.findOneAndUpdate(
+//     { slug },
+//     { $set: { name: name, slug: slugify(name) } },
+//     { new: true }
+//   );
+//   return updateCategory;
+// };
 
-const deletecategory = async (slug) => {
-  const deleteCategory = await Category.findOneAndDelete({ slug });
-  return deleteCategory;
-};
+// const deletecategory = async (slug) => {
+//   const deleteCategory = await Category.findOneAndDelete({ slug });
+//   return deleteCategory;
+// };
 
 module.exports = {
   createProductService,
