@@ -33,9 +33,16 @@ const createProductService = async (
   return newProduct;
 };
 
-// const getCategories = async () => {
-//   return await Category.find({}).select("name slug").lean();
-// };
+const getProducts = async (page, limit) => {
+  const products = await Product.find({})
+    .populate("category")
+    .skip((page - 1) * limit)
+    .limit(limit)
+    .sort({ createdAt: -1 });
+  if (!products) throw createError(404, "No product found");
+  const count = await Product.find({}).countDocuments();
+  return { products, count };
+};
 // const getCategory = async (slug) => {
 //   return await Category.find({ slug }).select("name slug").lean();
 // };
@@ -56,4 +63,5 @@ const createProductService = async (
 
 module.exports = {
   createProductService,
+  getProducts,
 };

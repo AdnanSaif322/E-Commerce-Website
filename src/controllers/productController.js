@@ -1,6 +1,10 @@
 const createError = require("http-errors");
 const { successResponse } = require("./responseController");
-const { createProductService } = require("../services/productService");
+const {
+  createProductService,
+  getProducts,
+} = require("../services/productService");
+const Product = require("../models/productModel");
 
 // create category for Admin
 const handleProduct = async (req, res, next) => {
@@ -9,9 +13,6 @@ const handleProduct = async (req, res, next) => {
 
     const image = req.file?.path;
 
-    if (image && image.size > 1024 * 1024 * 2) {
-      throw createError(400, "File is too large! It must be less than 2 mb");
-    }
     const newProduct = await createProductService(
       name,
       description,
@@ -34,13 +35,25 @@ const handleProduct = async (req, res, next) => {
 };
 
 // get all categories
-const handleGetCategories = async (req, res, next) => {
+const handleGetProducts = async (req, res, next) => {
   try {
-    const categories = await getCategories();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const productsData = await getProducts(page, limit);
+
     return successResponse(res, {
       statusCode: 200,
-      message: "/categories",
-      payload: categories,
+      message: "/products",
+      payload: {
+        products: productsData.products,
+        pagination: {
+          totalPage: Math.ceil(productsData.count / limit),
+          currentPage: page,
+          previousPage: page - 1 > 0 ? page - 1 : null,
+          nextPage:
+            page + 1 <= Math.ceil(productsData.count / limit) ? page + 1 : null,
+        },
+      },
     });
   } catch (error) {
     next(error);
@@ -107,4 +120,5 @@ const handleDeleteCategory = async (req, res, next) => {
 
 module.exports = {
   handleProduct,
+  handleGetProducts,
 };

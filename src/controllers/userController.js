@@ -92,19 +92,17 @@ const handleProcessRegister = async (req, res, next) => {
     // check if user already exist in DB
     const userExist = await User.exists({ email: email });
 
-    const image = req.file?.path;
-
-    if (image && image.size > 1024 * 1024 * 2) {
-      throw createError(400, "File is too large! It must be less than 2 mb");
-    }
-
     if (userExist) {
       throw createError(
         409,
         "User already exist with this email. Please log in!"
       );
     }
+    const image = req.file?.path;
 
+    if (image && image.size > 1024 * 1024 * 2) {
+      throw createError(400, "File is too large! It must be less than 2 mb");
+    }
     // create jwt
     const token = createJSONWebToken(
       { name, email, password, phone, address },
