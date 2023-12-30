@@ -5,6 +5,7 @@ const { validateProduct } = require("../validators/product");
 const {
   handleProduct,
   handleGetProducts,
+  handleGetProduct,
 } = require("../controllers/productController");
 const { uploadProductImage } = require("../middlewares/uploadFile");
 
@@ -31,7 +32,7 @@ productRouter.get("/", handleGetProducts); //get all categories
 //   handleUpdateCategory
 // ); //update category
 
-// productRouter.get("/:slug", validateCategory, runValidation, handleGetCategory); //get category
+productRouter.get("/:slug", handleGetProduct); //get product
 
 // productRouter.delete("/:slug", isLoggedIn, isAdmin, handleDeleteCategory); //delete category
 

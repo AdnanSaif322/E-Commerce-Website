@@ -3,6 +3,7 @@ const { successResponse } = require("./responseController");
 const {
   createProductService,
   getProducts,
+  getProduct,
 } = require("../services/productService");
 const Product = require("../models/productModel");
 
@@ -61,18 +62,18 @@ const handleGetProducts = async (req, res, next) => {
 };
 
 // single category
-const handleGetCategory = async (req, res, next) => {
+const handleGetProduct = async (req, res, next) => {
   try {
     const { slug } = req.params;
     // const slug = slugify(name);
-    const category = await getCategory(slug);
-    if (!category) {
+    const product = await getProduct(slug);
+    if (!product) {
       throw createError(404, "Category not found!");
     }
     return successResponse(res, {
       statusCode: 200,
-      message: "/category",
-      payload: category,
+      message: "/product",
+      payload: product,
     });
   } catch (error) {
     next(error);
@@ -121,4 +122,5 @@ const handleDeleteCategory = async (req, res, next) => {
 module.exports = {
   handleProduct,
   handleGetProducts,
+  handleGetProduct,
 };

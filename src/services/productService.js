@@ -43,9 +43,10 @@ const getProducts = async (page, limit) => {
   const count = await Product.find({}).countDocuments();
   return { products, count };
 };
-// const getCategory = async (slug) => {
-//   return await Category.find({ slug }).select("name slug").lean();
-// };
+
+const getProduct = async (slug) => {
+  return await Product.findOne({ slug });
+};
 
 // const updateCategory = async (name, slug) => {
 //   const updateCategory = await Category.findOneAndUpdate(
@@ -64,4 +65,5 @@ const getProducts = async (page, limit) => {
 module.exports = {
   createProductService,
   getProducts,
+  getProduct,
 };
