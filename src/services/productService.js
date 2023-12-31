@@ -1,6 +1,7 @@
 const slugify = require("slugify");
 const Product = require("../models/productModel");
 const createError = require("http-errors");
+const deleteImage = require("../helper/deleteImageHelper");
 
 const createProductService = async (
   name,
@@ -59,6 +60,9 @@ const getProduct = async (slug) => {
 
 const deleteProduct = async (slug) => {
   const deleteProducts = await Product.findOneAndDelete({ slug });
+  if (deleteProducts && deleteProducts.image) {
+    await deleteImage(deleteProducts.image);
+  }
   return deleteProducts;
 };
 

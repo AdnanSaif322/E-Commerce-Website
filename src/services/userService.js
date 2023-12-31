@@ -59,13 +59,12 @@ const deleteUserById = async (id, options = {}) => {
       _id: id,
       isAdmin: false,
     });
-    // console.log(user.image);
-    const image = req.file?.path;
-    const imagePath = user.image;
-    // if(user && user.image){
-    //   await deleteImage(imagePath);
-    // }
-    deleteImage(imagePath);
+
+    // const image = req.file?.path;
+    // const imagePath = user.image;
+    if (user && user.image) {
+      await deleteImage(user.image);
+    }
   } catch (error) {
     throw error;
   }
@@ -83,8 +82,8 @@ const updateUserById = async (userId, req) => {
     for (const key in req.body) {
       if (allowedFields.includes(key)) {
         updates[key] = req.body[key];
-      } else if (key == 'email') {
-        throw createError(400,"Email can not be updated!");
+      } else if (key == "email") {
+        throw createError(400, "Email can not be updated!");
       }
     }
 

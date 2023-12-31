@@ -7,6 +7,7 @@ const {
   deleteProduct,
 } = require("../services/productService");
 const Product = require("../models/productModel");
+const deleteImage = require("../helper/deleteImageHelper");
 
 // create category for Admin
 const handleProduct = async (req, res, next) => {
@@ -105,15 +106,15 @@ const handleUpdateCategory = async (req, res, next) => {
 const handleDeleteProduct = async (req, res, next) => {
   try {
     const { slug } = req.params;
-    const deleteProducts = await deleteProduct(slug);
+    const deletedProducts = await deleteProduct(slug);
 
-    if (!deleteProducts) {
+    if (!deletedProducts) {
       throw createError(404, "Product not found with this slug!");
     }
     return successResponse(res, {
       statusCode: 200,
       message: "/category deleted",
-      payload: deleteProducts,
+      payload: deletedProducts,
     });
   } catch (error) {
     next(error);
