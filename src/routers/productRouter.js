@@ -6,6 +6,7 @@ const {
   handleProduct,
   handleGetProducts,
   handleGetProduct,
+  handleDeleteProduct,
 } = require("../controllers/productController");
 const { uploadProductImage } = require("../middlewares/uploadFile");
 
@@ -34,6 +35,6 @@ productRouter.get("/", handleGetProducts); //get all categories
 
 productRouter.get("/:slug", handleGetProduct); //get product
 
-// productRouter.delete("/:slug", isLoggedIn, isAdmin, handleDeleteCategory); //delete category
+productRouter.delete("/:slug", isLoggedIn, isAdmin, handleDeleteProduct); //delete category
 
 module.exports = productRouter;

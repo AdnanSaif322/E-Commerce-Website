@@ -4,6 +4,7 @@ const {
   createProductService,
   getProducts,
   getProduct,
+  deleteProduct,
 } = require("../services/productService");
 const Product = require("../models/productModel");
 
@@ -101,18 +102,18 @@ const handleUpdateCategory = async (req, res, next) => {
 };
 
 // delete category
-const handleDeleteCategory = async (req, res, next) => {
+const handleDeleteProduct = async (req, res, next) => {
   try {
     const { slug } = req.params;
-    const deleteCategory = await deletecategory(slug);
+    const deleteProducts = await deleteProduct(slug);
 
-    if (!deleteCategory) {
-      throw createError(404, "Category not found with this slug!");
+    if (!deleteProducts) {
+      throw createError(404, "Product not found with this slug!");
     }
     return successResponse(res, {
       statusCode: 200,
       message: "/category deleted",
-      payload: deleteCategory,
+      payload: deleteProducts,
     });
   } catch (error) {
     next(error);
@@ -123,4 +124,5 @@ module.exports = {
   handleProduct,
   handleGetProducts,
   handleGetProduct,
+  handleDeleteProduct,
 };

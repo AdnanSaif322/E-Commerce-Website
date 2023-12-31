@@ -57,13 +57,14 @@ const getProduct = async (slug) => {
 //   return updateCategory;
 // };
 
-// const deletecategory = async (slug) => {
-//   const deleteCategory = await Category.findOneAndDelete({ slug });
-//   return deleteCategory;
-// };
+const deleteProduct = async (slug) => {
+  const deleteProducts = await Product.findOneAndDelete({ slug });
+  return deleteProducts;
+};
 
 module.exports = {
   createProductService,
   getProducts,
   getProduct,
+  deleteProduct,
 };
