@@ -1,5 +1,5 @@
 const { Schema, model } = require("mongoose");
-const { defaultImagePath } = require("../secret");
+const { defaultProductImagePath } = require("../secret");
 
 //name, slug, description, price, quantity, sold, shipping, image
 const productSchema = new Schema(
@@ -62,7 +62,7 @@ const productSchema = new Schema(
     },
     image: {
       type: String,
-      default: defaultImagePath,
+      default: defaultProductImagePath,
     },
     category: {
       type: Schema.Types.ObjectId,

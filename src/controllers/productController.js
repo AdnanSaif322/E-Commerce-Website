@@ -7,10 +7,8 @@ const {
   deleteProduct,
   updateProduct,
 } = require("../services/productService");
-const Product = require("../models/productModel");
-const deleteImage = require("../helper/deleteImageHelper");
 
-// create category for Admin
+// create product for Admin
 const handleProduct = async (req, res, next) => {
   try {
     const { name, description, price, quantity, shipping, category } = req.body;
@@ -38,7 +36,7 @@ const handleProduct = async (req, res, next) => {
   }
 };
 
-// get all categories
+// get all product
 const handleGetProducts = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -64,7 +62,7 @@ const handleGetProducts = async (req, res, next) => {
   }
 };
 
-// single category
+// single product
 const handleGetProduct = async (req, res, next) => {
   try {
     const { slug } = req.params;
@@ -83,32 +81,13 @@ const handleGetProduct = async (req, res, next) => {
   }
 };
 
-// update category
+// update product
 const handleUpdateProduct = async (req, res, next) => {
   try {
     const { slug } = req.params;
-    const updateOptions = { new: true, runvalidators: true, context: "query" };
-    let updates = {};
+    const image = req.file?.path;
+    const updatedProduct = await updateProduct(slug, image, req);
 
-    const allowedFields = [
-      "name",
-      "description",
-      "price",
-      "sold",
-      "quantity",
-      "shipping",
-    ];
-    for (const key in req.body) {
-      if (allowedFields.includes(key)) {
-        updates[key] = req.body[key];
-      }
-    }
-
-    const updatedProduct = await updateProduct(slug, updates, updateOptions);
-
-    if (!updatedProduct) {
-      throw createError(404, "Product not found with this slug!");
-    }
     return successResponse(res, {
       statusCode: 200,
       message: "/product updated",
@@ -119,7 +98,7 @@ const handleUpdateProduct = async (req, res, next) => {
   }
 };
 
-// delete category
+// delete product
 const handleDeleteProduct = async (req, res, next) => {
   try {
     const { slug } = req.params;

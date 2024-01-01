@@ -49,9 +49,38 @@ const getProduct = async (slug) => {
   return await Product.findOne({ slug });
 };
 
-const updateProduct = async (slug, updates, updateOptions) => {
-  if (updates.name) {
-    updates.slug = slugify(updates.name);
+const updateProduct = async (slug, image, req) => {
+  const product = await Product.findOne({ slug: slug });
+  if (!product) {
+    throw createError(404, "Product not found with this slug");
+  }
+  const updateOptions = { new: true, runvalidators: true, context: "query" };
+  let updates = {};
+
+  const allowedFields = [
+    "name",
+    "description",
+    "price",
+    "sold",
+    "quantity",
+    "shipping",
+  ];
+  for (const key in req.body) {
+    if (allowedFields.includes(key)) {
+      if (key === "name") {
+        updates.slug = slugify(req.body[key]);
+      }
+      updates[key] = req.body[key];
+    }
+  }
+
+  if (image) {
+    if (image.size > 1024 * 1024 * 2) {
+      throw new Error("File too large. It must be less than 2 MB");
+    }
+    updates.image = image;
+    console.log(product.image);
+    await deleteImage(product.image);
   }
 
   const updatedProduct = await Product.findOneAndUpdate(
@@ -65,6 +94,8 @@ const updateProduct = async (slug, updates, updateOptions) => {
 const deleteProduct = async (slug) => {
   const deleteProducts = await Product.findOneAndDelete({ slug });
   if (deleteProducts && deleteProducts.image) {
+    console.log(deleteProducts.image);
+
     await deleteImage(deleteProducts.image);
   }
   return deleteProducts;

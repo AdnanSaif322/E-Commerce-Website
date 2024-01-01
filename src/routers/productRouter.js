@@ -25,7 +25,13 @@ productRouter.post(
 
 productRouter.get("/", handleGetProducts); //get all categories
 
-productRouter.put("/:slug", isLoggedIn, isAdmin, handleUpdateProduct); //update category
+productRouter.put(
+  "/:slug",
+  uploadProductImage.single("image"),
+  isLoggedIn,
+  isAdmin,
+  handleUpdateProduct
+); //update category
 
 productRouter.get("/:slug", handleGetProduct); //get product
 

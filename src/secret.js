@@ -4,8 +4,11 @@ const serverPort = process.env.SERVER_PORT || 3002;
 
 const mongoUrl = process.env.MONGOBD_ATLAS_URL;
 
-const defaultImagePath =
+const defaultUserImagePath =
   process.env.DEAFULT_USER_IMAGE || "public/users/users.png";
+
+const defaultProductImagePath =
+  process.env.DEAFULT_PRODUCT_IMAGE || "public/products/product.png";
 
 const jwtActivationKey = process.env.JWT_ACTIVATION_KEY || "asd0spoi2lklsd";
 
@@ -24,12 +27,13 @@ const clientURL = process.env.CLIENT_URL || "";
 module.exports = {
   serverPort,
   mongoUrl,
-  defaultImagePath,
+  defaultUserImagePath,
+  defaultProductImagePath,
   jwtActivationKey,
   smtpUsername,
   smtpPassword,
   clientURL,
   jwtAccessKey,
   jwtResetPasswordKey,
-  jwtRefreshKey
+  jwtRefreshKey,
 };
