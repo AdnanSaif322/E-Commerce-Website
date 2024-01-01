@@ -7,6 +7,7 @@ const {
   handleGetProducts,
   handleGetProduct,
   handleDeleteProduct,
+  handleUpdateProduct,
 } = require("../controllers/productController");
 const { uploadProductImage } = require("../middlewares/uploadFile");
 
@@ -24,14 +25,7 @@ productRouter.post(
 
 productRouter.get("/", handleGetProducts); //get all categories
 
-// productRouter.put(
-//   "/:slug",
-//   isLoggedIn,
-//   isAdmin,
-//   validateCategory,
-//   runValidation,
-//   handleUpdateCategory
-// ); //update category
+productRouter.put("/:slug", isLoggedIn, isAdmin, handleUpdateProduct); //update category
 
 productRouter.get("/:slug", handleGetProduct); //get product
 

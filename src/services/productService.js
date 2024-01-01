@@ -49,14 +49,18 @@ const getProduct = async (slug) => {
   return await Product.findOne({ slug });
 };
 
-// const updateCategory = async (name, slug) => {
-//   const updateCategory = await Category.findOneAndUpdate(
-//     { slug },
-//     { $set: { name: name, slug: slugify(name) } },
-//     { new: true }
-//   );
-//   return updateCategory;
-// };
+const updateProduct = async (slug, updates, updateOptions) => {
+  if (updates.name) {
+    updates.slug = slugify(updates.name);
+  }
+
+  const updatedProduct = await Product.findOneAndUpdate(
+    { slug },
+    updates,
+    updateOptions
+  );
+  return updatedProduct;
+};
 
 const deleteProduct = async (slug) => {
   const deleteProducts = await Product.findOneAndDelete({ slug });
@@ -71,4 +75,5 @@ module.exports = {
   getProducts,
   getProduct,
   deleteProduct,
+  updateProduct,
 };

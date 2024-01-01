@@ -5,6 +5,7 @@ const {
   getProducts,
   getProduct,
   deleteProduct,
+  updateProduct,
 } = require("../services/productService");
 const Product = require("../models/productModel");
 const deleteImage = require("../helper/deleteImageHelper");
@@ -83,19 +84,35 @@ const handleGetProduct = async (req, res, next) => {
 };
 
 // update category
-const handleUpdateCategory = async (req, res, next) => {
+const handleUpdateProduct = async (req, res, next) => {
   try {
-    const { name } = req.body;
     const { slug } = req.params;
-    const updatedCategory = await updateCategory(name, slug);
+    const updateOptions = { new: true, runvalidators: true, context: "query" };
+    let updates = {};
 
-    if (!updatedCategory) {
-      throw createError(404, "Category not found with this slug!");
+    const allowedFields = [
+      "name",
+      "description",
+      "price",
+      "sold",
+      "quantity",
+      "shipping",
+    ];
+    for (const key in req.body) {
+      if (allowedFields.includes(key)) {
+        updates[key] = req.body[key];
+      }
+    }
+
+    const updatedProduct = await updateProduct(slug, updates, updateOptions);
+
+    if (!updatedProduct) {
+      throw createError(404, "Product not found with this slug!");
     }
     return successResponse(res, {
       statusCode: 200,
-      message: "/category updated",
-      payload: updatedCategory,
+      message: "/product updated",
+      payload: updatedProduct,
     });
   } catch (error) {
     next(error);
@@ -126,4 +143,5 @@ module.exports = {
   handleGetProducts,
   handleGetProduct,
   handleDeleteProduct,
+  handleUpdateProduct,
 };
