@@ -39,9 +39,20 @@ const handleProduct = async (req, res, next) => {
 // get all product
 const handleGetProducts = async (req, res, next) => {
   try {
+    const search = req.query.search || "";
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
-    const productsData = await getProducts(page, limit);
+
+    const searchRegEx = new RegExp(".*" + search + ".*", "i");
+
+    const filter = {
+      isAdmin: { $ne: true },
+      $or: [
+        { name: { $regex: searchRegEx } },
+        // { email: { $regex: searchRegEx } },
+      ],
+    };
+    const productsData = await getProducts(filter, page, limit);
 
     return successResponse(res, {
       statusCode: 200,
@@ -52,6 +63,7 @@ const handleGetProducts = async (req, res, next) => {
           totalPage: Math.ceil(productsData.count / limit),
           currentPage: page,
           previousPage: page - 1 > 0 ? page - 1 : null,
+          count: productsData.count,
           nextPage:
             page + 1 <= Math.ceil(productsData.count / limit) ? page + 1 : null,
         },

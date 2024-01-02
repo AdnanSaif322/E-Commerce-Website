@@ -34,14 +34,14 @@ const createProductService = async (
   return newProduct;
 };
 
-const getProducts = async (page, limit) => {
-  const products = await Product.find({})
+const getProducts = async (filter = {}, page, limit) => {
+  const products = await Product.find(filter)
     .populate("category")
     .skip((page - 1) * limit)
     .limit(limit)
     .sort({ createdAt: -1 });
   if (!products) throw createError(404, "No product found");
-  const count = await Product.find({}).countDocuments();
+  const count = await Product.find(filter).countDocuments();
   return { products, count };
 };
 
