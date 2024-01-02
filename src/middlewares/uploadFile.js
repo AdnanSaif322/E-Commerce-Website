@@ -10,18 +10,18 @@ const {
 const { error } = require("console");
 
 const userStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, UPLOAD_USER_IMG_DIRECTORY);
-  },
+  // destination: function (req, file, cb) {
+  //   cb(null, UPLOAD_USER_IMG_DIRECTORY);
+  // },
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);
   },
 });
 
 const productStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, UPLOAD_PRODUCT_IMG_DIRECTORY);
-  },
+  // destination: function (req, file, cb) {
+  //   cb(null, UPLOAD_PRODUCT_IMG_DIRECTORY);
+  // },
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);
   },

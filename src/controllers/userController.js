@@ -6,6 +6,7 @@ const { findWithId } = require("../services/findItem");
 const bcrypt = require("bcryptjs");
 const deleteImage = require("../helper/deleteImageHelper");
 const { createJSONWebToken } = require("../helper/jsonwebtoken");
+const cloudinary = require("../config/cloudinary");
 const {
   jwtActivationKey,
   clientURL,
@@ -153,6 +154,17 @@ const handleActivateUserAccount = async (req, res, next) => {
           409,
           "User already exist with this email. Please log in!"
         );
+      }
+
+      const image = decoded.image;
+      if (image) {
+        const response = await cloudinary.uploader.upload(image, {
+          folder: "EcommerceMern",
+        });
+        console.log(response);
+
+        decoded.image = response.secure_url;
+        console.log(decoded.image);
       }
 
       await User.create(decoded);
